@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <style>
+      body {
+        margin:0;
+        padding:0;
+        width:100vw;
+        height:100vh;
+        color:white;
+        text-align:center;
+        font-size:0.8em;
+      }
+      a {
+        color:white;
+      }
+      img {
+        position:absolute; 
+        bottom:0; 
+        left:0; 
+        width:100%;
+      }
+    </style>
+    <script>
+      var AIM_COLOR = '#ff0000';
+      var SHOT_COLOR = '#0000ff';
+      var color = AIM_COLOR;
+      var timer;
+      var lastModified = new Date - 0;
+
+      function drawMarker() {
+        document.body.style.backgroundColor = color;
+      }
+
+      function toggleMarkerColor() {
+        var timestamp = new Date - 0;
+        if (timestamp - lastModified < 2 * 1000) return;
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        if (navigator.vibrate) navigator.vibrate(50);
+        lastModified = timestamp;
+
+        color = color == AIM_COLOR ? SHOT_COLOR : AIM_COLOR;
+        drawMarker();
+        if (color == SHOT_COLOR) {
+          timer = setTimeout(function() {
+            color = AIM_COLOR;
+            drawMarker();
+          }, 3000);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function(event) {
+        document.body.addEventListener('touchend', function(event) {
+          toggleMarkerColor();
+        });
+        drawMarker();
+      });
+
+      window.addEventListener('devicemotion', function(event) {
+        if (window.location.hash !== '#enable_devicemotion') return;
+        
+        //var threshold = 10;
+        var threshold = 5;
+        if (threshold < Math.abs(event.acceleration.z)) {
+          toggleMarkerColor();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    ウェブカメラのあるPCで以下のURLを開き<br/>
+    カメラへのアクセスを許可してください<br/>
+    http://technohippy.github.io/threejs-toys/angry-birds/#onetap<br/><br/>
+    その後、この画面をウェブカメラに向けて<br/>
+    狙いを定め、定まったら画面をタップしてください
+    <img src="image/eagle_grayscale.png">
+  </body>
+</html>
