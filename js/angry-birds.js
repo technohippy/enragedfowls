@@ -164,19 +164,6 @@ AngryBirds.Stage.prototype = {
 
         this.piggies.splice(this.piggies.indexOf(piggy), 1);
         if (this.piggies.length == 0) {
-
-          // TODO: isSmartphone
-          if (this.game.isSmartphone) {
-            $('game-clear').className = 'show';
-            this.game.nextStageTimer = null;
-            setTimeout(function() {
-              $('game-clear').className = 'hide';
-              this.game.startSmartphoneMode();
-              this.game.world.stop();
-            }.bind(this), 5000);
-            return;
-          }
-
           this.game.clearStage(this);
         }
       }.bind(this));
@@ -442,7 +429,7 @@ AngryBirds.Game.prototype = {
     var header = document.getElementsByTagName('header')[0];
     var scores = $('scores');
     var toolbar = $('toolbar');
-    if (0 <= [AngryBirds.GameMode.SIGHT_SETTING, AngryBirds.GameMode.FLYING, AngryBirds.GameMode.LANDING].indexOf(this.gameMode) && !this.isSmartphone /*TODO*/) {
+    if (0 <= [AngryBirds.GameMode.SIGHT_SETTING, AngryBirds.GameMode.FLYING, AngryBirds.GameMode.LANDING].indexOf(this.gameMode)) {
       header.className = 'show';
       scores.className = 'show';
       toolbar.className = 'show';
@@ -733,28 +720,6 @@ AngryBirds.Game.prototype = {
     }
   },
 
-  startSmartphoneMode: function() {
-    this.isSmartphone = true; // TODO
-
-    this.setting.waitingTimeToReshot = 15000;
-    this.getCurrentStage().destructFromFrom(this.world);
-    var stage = new AngryBirds.Stage1({x:0, z:30});
-    stage.game = this;
-    stage.index = 0;
-    this.stages = [stage];
-    this.constructStage();
-    this.ready();
-
-    this.setGameMode(AngryBirds.GameMode.SIGHT_SETTING);
-
-    var header = document.getElementsByTagName('header')[0];
-    var scores = $('scores');
-    var toolbar = $('toolbar');
-    header.className = 'hide';
-    scores.className = 'hide';
-    toolbar.className = 'hide';
-  },
-
   setupEventListeners: function() {
     document.addEventListener('mousedown', this.mouseDownListener.bind(this));
     document.addEventListener('mousemove', this.mouseMoveListener.bind(this));
@@ -763,11 +728,6 @@ AngryBirds.Game.prototype = {
     $('start-button').addEventListener('click', function(event) {
       $('title').className = 'hide';
       this.setGameMode(AngryBirds.GameMode.SIGHT_SETTING);
-    }.bind(this));
-    $('smartphone-button').addEventListener('click', function(event) {
-      $('title').className = 'hide';
-      this.startCameraDetector();
-      this.startSmartphoneMode();
     }.bind(this));
     $('help-menu-button').addEventListener('click', function(event) {
       this.showHelp();
@@ -962,11 +922,6 @@ AngryBirds.Game.start = function(opts) {
   // TODO: one-tap-mode
   var game = new AngryBirds.Game(opts || {});
   game.start();
-  if (location.hash === '#onetap') {
-    $('title').className = 'hide';
-    game.startCameraDetector();
-    game.startSmartphoneMode();
-  }
 };
 
 }).call(this, AngryBirds);
